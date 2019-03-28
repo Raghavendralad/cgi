@@ -1,0 +1,20 @@
+KeyVaultName ==> karjdkeyvault
+KeyVaultResourceGroup ==> karkeyvault
+KeyName ==> karjddiskencryption
+
+az203newvm
+anothervm
+
+
+
+$keyVault = Get-AzKeyVault -VaultName "karjdkeyvault" -ResourceGroupName "karkeyvault";
+$diskEncryptionKeyVaultUrl = $keyVault.VaultUri;
+$keyVaultResourceId = $keyVault.ResourceId;
+$keyEncryptionKeyUrl = (Get-AzKeyVaultKey -VaultName "karjdkeyvault" -Name "karjddiskencryption").Key.kid;
+
+Set-AzVMDiskEncryptionExtension -ResourceGroupName "az203newvm" `
+    -VMName "anothervm" `
+    -DiskEncryptionKeyVaultUrl $diskEncryptionKeyVaultUrl `
+    -DiskEncryptionKeyVaultId $keyVaultResourceId `
+    -KeyEncryptionKeyUrl $keyEncryptionKeyUrl `
+    -KeyEncryptionKeyVaultId $keyVaultResourceId

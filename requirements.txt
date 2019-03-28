@@ -1,0 +1,5 @@
+visualstudio
+azure.com/en-ca/tools
+azure citadel
+microsoft.com/handsonlabs/selfpacedlabs
+docs.microsoft.com/en-us/learn/

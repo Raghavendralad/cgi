@@ -1,0 +1,34 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table; 
+
+namespace ConsoleApp2
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+                "DefaultEndpointsProtocol=https;AccountName=azsjdnewstorage;AccountKey=O3gYWRMURv3FBL+kxzWnzXqEXGZrTQz2j/A3nUKvAARFlL3qDLFVF7NNIRsJZiGCEv4bL5bYHTg0A5yKd/X2Ow==;EndpointSuffix=core.windows.net");
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            CloudTable employees = tableClient.GetTableReference("Employees");
+
+            EmployeeEntity employeenumber1 = new EmployeeEntity("stanley","jones");
+
+            TableOperation insertop = TableOperation.Insert(employeenumber1);
+            employees.Execute(insertop);
+        }
+    }
+    public class EmployeeEntity : TableEntity
+    {
+        public EmployeeEntity(string firstname, string lastname)
+        {
+            this.PartitionKey = "staff";
+            this.RowKey = firstname + "" + lastname;
+        }
+    }
+}

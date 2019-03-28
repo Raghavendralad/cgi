@@ -1,0 +1,60 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+
+namespace ConsoleApp2
+{
+    class Program
+    {
+        static CloudStorageAccount storageAccount;
+        static CloudTableClient tableClient;
+        static CloudTable employees;
+
+        static void Main(string[] args)
+        {
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
+        "DefaultEndpointsProtocol=https;AccountName=azurejdstorage;AccountKey=MpdN7UsEO1uf6lNrrzMO8g4So2B1uloiIMnKFvxNhGlwdhP2aFAQAOuolFtqrbU2xIjBA4yc16aQh5WBw4TOAw==;EndpointSuffix=core.windows.net");
+            tableClient = storageAccount.CreateCloudTableClient();
+            employees = tableClient.GetTableReference("Employees");
+
+            InsertOp("karthick", "selvam");
+            InsertOp("john", "doe");
+            InsertOp("richard", "smith");
+            QueryOp();
+
+            Console.WriteLine("\n\n");
+            Console.WriteLine("Press any key to exit");
+            Console.ReadKey();
+        }
+
+        static void InsertOp(string first, string last)
+        {
+            EmployeeEntity employeenumber1 = new EmployeeEntity(first, last);
+            TableOperation insertop = TableOperation.Insert(employeenumber1);
+            employees.Execute(insertop);
+        }
+        static void QueryOp()
+        {
+            TableQuery<EmployeeEntity> query = new TableQuery<EmployeeEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "staff"));
+            Console.WriteLine("Name of All the Stafff");
+            Console.WriteLine("=================================");
+            foreach (EmployeeEntity employee in employees.ExecuteQuery(query))
+            {
+                Console.WriteLine(employee.RowKey);
+            }
+        }
+    }
+}
+public class EmployeeEntity : TableEntity
+{
+    public EmployeeEntity(string firstname, string lastname)
+    {
+        this.PartitionKey = "staff";
+        this.RowKey = firstname + "" + lastname;
+    }
+    public EmployeeEntity() { }
+}
